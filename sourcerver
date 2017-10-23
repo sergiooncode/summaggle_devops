@@ -1,0 +1,58 @@
+#!/bin/bash
+
+### BEGIN INIT INFO
+# Provides:          slycr_wrker
+# Required-Start:    $local_fs $remote_fs $network $syslog $named
+# Required-Stop:     $local_fs $remote_fs $network $syslog $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start sourcerver
+# Description:       Start the Soucerer Server Process.
+### END INIT INFO
+
+case "$1" in
+  start)
+        cd ~summaggle/summaggle_sourcerer
+        if [ -f /var/run/sourcerver.pid ]
+        then
+                PID=`cat /var/run/sourcerver.pid`
+                kill  $PID
+                while [[ ( -d /proc/$PID ) && ( -z `grep zombie /proc/$PID/status` ) ]]; do
+                   sleep 1
+                done
+                rm /var/run/sourcerver.pid
+        fi
+        ./sourcerver.sh
+        ;;
+  stop)
+        cd ~summaggle/summaggle_sourcerer
+        if [ -f /var/run/sourcerver.pid ]
+        then
+                PID=`cat /var/run/sourcerver.pid`
+                kill  $PID
+                while [[ ( -d /proc/$PID ) && ( -z `grep zombie /proc/$PID/status` ) ]]; do
+                   sleep 1
+                done
+                rm /var/run/sourcerver.pid
+        fi
+        ;;
+  restart|force-reload)
+        cd ~summaggle/summaggle_sourcerer
+        if [ -f /var/run/sourcerver.pid ]
+        then
+                PID=`cat /var/run/sourcerver.pid`
+                kill  $PID
+                while [[ ( -d /proc/$PID ) && ( -z `grep zombie /proc/$PID/status` ) ]]; do
+                   sleep 1
+                done
+                rm /var/run/sourcerver.pid
+        fi
+        ./sourcerver.sh
+        ;;
+  *)
+        echo "Usage: /etc/init.d/sourcerver {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
